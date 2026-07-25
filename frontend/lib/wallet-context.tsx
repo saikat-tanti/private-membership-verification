@@ -9,7 +9,11 @@ import {
   useState,
   type ReactNode,
 } from 'react';
-import { loadConfig, type AppConfig } from '@/lib/config';
+import {
+  loadConfig,
+  saveContractAddressOverride,
+  type AppConfig,
+} from '@/lib/config';
 import { pushActivity } from '@/lib/activity';
 import {
   connectLace,
@@ -40,6 +44,8 @@ type WalletContextValue = {
   connect: () => Promise<void>;
   disconnect: () => void;
   refreshPublicState: () => Promise<void>;
+  setContractAddress: (address: string) => void;
+  clearContractAddressOverride: () => void;
 };
 
 const WalletContext = createContext<WalletContextValue | null>(null);
@@ -62,7 +68,7 @@ async function contractApi(): Promise<{
 }
 
 export function WalletProvider({ children }: { children: ReactNode }) {
-  const config = useMemo(() => loadConfig(), []);
+  const [config, setConfig] = useState<AppConfig>(() => loadConfig());
   const [laceInstalled, setLaceInstalled] = useState(false);
   const [laceReady, setLaceReady] = useState(false);
   const [wallet, setWallet] = useState<ConnectedWallet | null>(null);
@@ -72,9 +78,33 @@ export function WalletProvider({ children }: { children: ReactNode }) {
   const [stateLoading, setStateLoading] = useState(false);
   const [stateError, setStateError] = useState<string | null>(null);
 
+  const reloadConfig = useCallback(() => {
+    setConfig(loadConfig());
+  }, []);
+
+  useEffect(() => {
+    const onConfig = () => reloadConfig();
+    window.addEventListener('pmv:config', onConfig);
+    // Re-read after hydration so localStorage overrides apply.
+    reloadConfig();
+    return () => window.removeEventListener('pmv:config', onConfig);
+  }, [reloadConfig]);
+
+  const setContractAddress = useCallback((address: string) => {
+    saveContractAddressOverride(address);
+    setConfig(loadConfig());
+    pushActivity('settings_update', 'Contract address updated', address.trim());
+  }, []);
+
+  const clearContractAddressOverride = useCallback(() => {
+    saveContractAddressOverride(null);
+    setConfig(loadConfig());
+    pushActivity('settings_update', 'Contract address override cleared');
+  }, []);
+
   const refreshPublicState = useCallback(async () => {
     if (!config.contractAddress) {
-      setStateError('No contract address configured (set VITE_CONTRACT_ADDRESS).');
+      setStateError('No contract address configured. Set it in Settings or VITE_CONTRACT_ADDRESS.');
       return;
     }
     const indexer = config.indexerUri ?? wallet?.uris.indexerUri;
@@ -103,11 +133,7 @@ export function WalletProvider({ children }: { children: ReactNode }) {
       const w = await connectLace(config.network);
       setWallet(w);
       window.localStorage.setItem(AUTOCONNECT_KEY, '1');
-      pushActivity(
-        'wallet_connect',
-        'Lace wallet connected',
-        w.state.address,
-      );
+      pushActivity('wallet_connect', 'Lace wallet connected', w.state.address);
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
       setWalletError(message);
@@ -132,7 +158,6 @@ export function WalletProvider({ children }: { children: ReactNode }) {
       setLaceReady(true);
 
       const auto = window.localStorage.getItem(AUTOCONNECT_KEY);
-      // Auto-connect on first visit and whenever user previously connected.
       if (found && auto !== '0') {
         setConnecting(true);
         try {
@@ -178,6 +203,8 @@ export function WalletProvider({ children }: { children: ReactNode }) {
       connect,
       disconnect,
       refreshPublicState,
+      setContractAddress,
+      clearContractAddressOverride,
     }),
     [
       config,
@@ -192,6 +219,8 @@ export function WalletProvider({ children }: { children: ReactNode }) {
       connect,
       disconnect,
       refreshPublicState,
+      setContractAddress,
+      clearContractAddressOverride,
     ],
   );
 

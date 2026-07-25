@@ -118,7 +118,8 @@ export default function MembershipPage() {
 
           {!config.contractAddress ? (
             <p className="mt-4 text-sm text-[var(--warn)]">
-              Set VITE_CONTRACT_ADDRESS, then restart the app.
+              No contract address yet. Open Settings → paste the deployed address (or click Use local
+              deploy).
             </p>
           ) : null}
           {status.kind === 'success' ? (

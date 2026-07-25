@@ -16,7 +16,7 @@
     "proof-server:start": "docker compose up -d",
     "proof-server:stop": "docker compose down",
     "clean": "rm -rf contracts/managed",
-    "test": "node --import tsx --test src/test/contract.test.ts",
+    "test": "node --import tsx --test src/test/*.test.ts",
     "demo:verify": "npx tsx scripts/demo-verify.ts",
     "frontend:install": "npm --prefix frontend install",
     "dev": "npm --prefix frontend run dev",

@@ -16,7 +16,7 @@ import { indexerPublicDataProvider } from '@midnight-ntwrk/midnight-js-indexer-p
 import { levelPrivateStateProvider } from '@midnight-ntwrk/midnight-js-level-private-state-provider';
 import { NodeZkConfigProvider } from '@midnight-ntwrk/midnight-js-node-zk-config-provider';
 import { resolveNetwork, getOrCreateSeed, getDeployment } from './network';
-import { createWallet, persistWalletState, unshieldedToken, type WalletContext } from './wallet';
+import { createWallet, persistWalletState, waitForWalletSync, unshieldedToken, type WalletContext } from './wallet';
 import { CompiledContract } from '@midnight-ntwrk/midnight-js-protocol/compact-js';
 
 // Enable WebSocket for GraphQL subscriptions
@@ -113,15 +113,14 @@ async function main() {
       console.log(`  Restored ${restoredCount}/3 child wallets from .midnight-wallet-state — sync will resume from saved point.`);
     }
 
-    console.log('  Syncing with network...');
-    const syncStart = Date.now();
-    const syncInterval = setInterval(() => {
-      const elapsed = Math.round((Date.now() - syncStart) / 1000);
-      process.stdout.write(`\r  ⏳ Still syncing... (${elapsed}s elapsed)   `);
-    }, 5000);
-    const state = await walletCtx.wallet.waitForSyncedState();
-    clearInterval(syncInterval);
-    process.stdout.write('\r  ✓ Synced with network.                                      \n');
+    let state;
+    try {
+      state = await waitForWalletSync(walletCtx, { network, networkConfig });
+    } catch (err) {
+      console.error(`\n❌ ${err instanceof Error ? err.message : String(err)}\n`);
+      await walletCtx.wallet.stop();
+      process.exit(1);
+    }
 
     await persistWalletState(network, walletCtx);
     const balance = state.unshielded.balances[unshieldedToken().raw] ?? 0n;

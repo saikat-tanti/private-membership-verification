@@ -5,6 +5,13 @@ on:
     branches: ['**']
   pull_request:
 
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     name: Compile, test, and build full stack
@@ -26,16 +33,11 @@ jobs:
       - name: Install dependencies
         run: npm install --no-audit --no-fund
 
-      - name: Install Compact toolchain
-        run: |
-          curl --proto '=https' --tlsv1.2 -LsSf \
-            https://github.com/midnightntwrk/compact/releases/latest/download/compact-installer.sh | sh
-          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
-
-      - name: Select Compact compiler 0.31.1
-        run: |
-          compact update 0.31.1 || compact update
-          compact --version
+      - name: Setup Compact Compiler 0.31.1
+        uses: midnightntwrk/setup-compact-action@v1
+        with:
+          compact-version: '0.31.1'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Compile Compact contract
         env:

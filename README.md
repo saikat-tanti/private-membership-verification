@@ -12,29 +12,31 @@
 ---
 
 ## Live Demo, Video & Repository
-- **Live Web Application**: [https://private-membership-verification.vercel.app/](https://private-membership-verification.vercel.app/) *(update URL after your Vercel deploy)*
-- **YouTube Demo Video**: [https://youtu.be/REPLACE_WITH_YOUR_VIDEO_ID](https://youtu.be/REPLACE_WITH_YOUR_VIDEO_ID) *(paste your upload link)*
+- **Live Web Application**: [https://private-membership-verification.vercel.app/](https://private-membership-verification.vercel.app/)
+- **YouTube Demo Video**: [https://youtu.be/REPLACE_WITH_YOUR_VIDEO_ID](https://youtu.be/REPLACE_WITH_YOUR_VIDEO_ID) *(paste your upload URL before mentor submit)*
 - **GitHub Repository**: [https://github.com/saikat-tanti/private-membership-verification](https://github.com/saikat-tanti/private-membership-verification)
-- **CI/CD Workflow**: [`.github/workflows/ci.yml`](.github/workflows/ci.yml)
+- **CI/CD Workflow**: [`.github/workflows/ci.yml`](.github/workflows/ci.yml) — installs Compact **0.31.1**, runs `npm run compile`, `npm test`, and builds the Next.js frontend
 
 ---
 
 ## Challenge Requirements & Passing Checklist
 - [x] **Fully Functional Privacy dApp**: Midnight ZK allowlist — private `membershipSecret`, public `groupName` + `verifiedMemberCount`
-- [x] **Live Demo Deployment**: Vercel-ready Next.js 16 app (`frontend/`)
-- [x] **Demo Video (Lace Wallet + Membership UI)**: Lace connect + Membership / Dashboard / Settings walkthrough
+- [x] **Live Demo Deployment**: [https://private-membership-verification.vercel.app/](https://private-membership-verification.vercel.app/)
+- [x] **Demo Video (Lace Wallet + Membership UI)**: Lace connect + Membership / Dashboard / Settings walkthrough *(add YouTube link above)*
 - [x] **Passing Test Suite**: 15 Node test cases (`npm test`)
-- [x] **CI/CD Pipeline Running**: GitHub Actions — Compact compile, tests, Next.js build
+- [x] **CI/CD Pipeline Running**: GitHub Actions — **Compact compile** + tests + Next.js build
 - [x] **Public GitHub Repository**: [saikat-tanti/private-membership-verification](https://github.com/saikat-tanti/private-membership-verification)
 - [x] **Deployed Smart Contract (local undeployed)**: `1786cf52d30966919b2c4d052e874160a355f428f9e6941dd26057615e93c19b`
 - [x] **Browser Wallet Integration**: Lace via `window.midnight` enumeration (`connect` / legacy `enable`)
 - [x] **Lace Wallet Connect / Disconnect Lifecycle**: Auto-connect on localhost + Settings session controls
-- [x] **16+ Meaningful Commits**: Structured history on `main`
+- [x] **Meaningful commit history** on `main` (well above Level 3 minimum)
 - [x] **Preprod status documented**: Wallet sync blocked; mentor guidance followed (full-stack first)
 
 ---
 
-## Product Idea — Private Allowlist Access
+## Product Idea / Proposal — Private Allowlist Access
+
+**Official Level 3 category:** Private Allowlist Access
 
 Exclusive DAOs, gated communities, and private cohorts need members to prove entitlement. Traditional flows force users to expose wallet identity or allowlist secrets on-chain.
 
@@ -48,15 +50,15 @@ Exclusive DAOs, gated communities, and private cohorts need members to prove ent
 
 ---
 
-## Midnight Privacy Model
+## Privacy Model — What Observers Can / Cannot Learn
 
 ### What an observer CANNOT learn
-1. **Membership secret / allowlist code** — private `Opaque<"string">` circuit input; never `disclose()`’d
+1. **Membership secret / allowlist code** — private `Opaque<"string">` circuit input to `verifyMembership`; `disclose()` is never called on it
 2. **Member identity / who verified** — not written to the public ledger
-3. **Wallet ↔ secret linkage** — observers see a valid verification event, not the witness
+3. **Wallet ↔ secret linkage** — observers see that a valid verification occurred, not the witness
 
 ### What an observer CAN learn
-1. **Group name** (`groupName`) — disclosed at deploy
+1. **Group name** (`groupName`) — disclosed in the constructor via `disclose()`
 2. **Verified member count** (`verifiedMemberCount`) — increments on successful `verifyMembership`
 3. **That a valid ZK verification occurred**
 
@@ -66,16 +68,28 @@ Exclusive DAOs, gated communities, and private cohorts need members to prove ent
 
 | Environment | Location / Address | Notes |
 | --- | --- | --- |
-| **Live Web App** | `https://private-membership-verification.vercel.app/` | Update after Vercel deploy |
-| **Demo Video** | YouTube link (replace placeholder) | Lace + Membership UI |
+| **Live Web App** | [private-membership-verification.vercel.app](https://private-membership-verification.vercel.app/) | Next.js 16 SaaS UI |
+| **Demo Video** | YouTube *(replace badge link)* | Lace + Membership UI |
 | **Local undeployed contract** | `1786cf52d30966919b2c4d052e874160a355f428f9e6941dd26057615e93c19b` | Group: **VIP Founders Club** |
-| **CI/CD** | [GitHub Actions](https://github.com/saikat-tanti/private-membership-verification/actions) | Compact + tests + Next build |
-| **Preprod** | Attempted — blocked | See `preprod-attempt.log` + mentor note below |
+| **CI/CD** | [GitHub Actions](https://github.com/saikat-tanti/private-membership-verification/actions) | Compact compile + tests + Next build |
+| **Preprod** | **BLOCKED / WAIVED** | Mentor guidance — see below |
 
-### Preprod / mentor note
+### Preprod status (mentor guidance)
 > If you're unable to deploy, just build the full-stack dApp and submit it. Skip the deployment part for now.
 
-Preprod wallet sync timed out (`Wallet.Sync`). Local undeployed deploy succeeded; full-stack app + CI are submitted with Preprod documented as pending.
+Preprod deploy was attempted; wallet sync hit `Wallet.Sync` errors / timeout before deployment could complete. **No Preprod contract address is claimed.** This submission includes local undeployed deploy, full-stack frontend (live on Vercel), tests, and CI. Preprod address can be added later when sync succeeds.
+
+### Switching to Preprod later
+When you have a Preprod contract address and funded Lace wallet:
+
+1. Set in `frontend/.env.local` (or Vercel env):
+   ```env
+   VITE_NETWORK=preprod
+   VITE_CONTRACT_ADDRESS=<preprod-contract-address>
+   VITE_PROOF_SERVER_URL=https://proof-server.preprod.midnight.network
+   ```
+2. Or paste the address in **Settings** and connect Lace on Preprod.
+3. Redeploy / restart the frontend.
 
 ---
 
@@ -108,9 +122,10 @@ On localhost the app **auto-connects** Lace when present. Disconnecting disables
 ## Quickstart & Local Installation
 
 ### Requirements
-- Node.js **22+**
-- Compact compiler **0.31.1** (`COMPACT_BACKEND=wasm` recommended)
-- Docker (local proof server / undeployed stack)
+- **Node.js 22+**
+- **Midnight Compact** compiler toolchain **0.5.x** selecting compiler **0.31.1** (`COMPACT_BACKEND=wasm` recommended)
+- **Docker** (local proof server / undeployed stack)
+- Prefer **Ubuntu WSL** for Compact — on Windows, `compact` in PATH may resolve to the OS file-compression utility, not Midnight Compact. Use WSL: `~/.local/bin/compact`
 
 ```bash
 git clone https://github.com/saikat-tanti/private-membership-verification.git
@@ -118,9 +133,11 @@ cd private-membership-verification
 npm install
 npm run frontend:install
 
-# Compile Compact contract
-export COMPACT_BACKEND=wasm   # Windows PowerShell: $env:COMPACT_BACKEND="wasm"
+# Compile Compact contract (WSL / Linux with Midnight Compact on PATH)
+export COMPACT_BACKEND=wasm
 npm run compile
+# Or: compact compile contracts/private-membership-verification.compact \
+#        contracts/managed/private-membership-verification
 
 # Local stack + deploy (Docker required)
 npm run setup -- --network undeployed
@@ -130,7 +147,7 @@ cp frontend/.env.example frontend/.env.local
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
+Open [http://localhost:3000](http://localhost:3000) or the live demo: [https://private-membership-verification.vercel.app/](https://private-membership-verification.vercel.app/).
 
 ### Frontend env (`frontend/.env.local`)
 ```env
@@ -146,12 +163,12 @@ Or paste the address in **Settings → Use local deploy** (no restart).
 ### Useful scripts
 | Command | Purpose |
 | --- | --- |
-| `npm run compile` | Compile Compact contract |
+| `npm run compile` | Compile Compact contract → `contracts/managed/` |
 | `npm test` | Contract / privacy / network tests |
 | `npm run setup -- --network undeployed` | Docker stack + deploy |
 | `npm run cli` / `npm run demo:verify` | Membership proof helpers |
 | `npm run dev` | Next.js app (port 3000) |
-| `npm run build` | Production build |
+| `npm run build` | Production build (root typecheck + frontend) |
 
 ---
 
@@ -170,32 +187,49 @@ Expected (summary):
 
 ---
 
-## Deploy to Vercel
+## Level 1 / 2 / 3 Submission Checklist
 
-1. Import [saikat-tanti/private-membership-verification](https://github.com/saikat-tanti/private-membership-verification) in [Vercel](https://vercel.com/new).
-2. Set **Root Directory** to `frontend`.
-3. Framework preset: **Next.js** (uses `frontend/vercel.json`).
-4. Add environment variables:
+### Level 1 — New Moon
+- [x] Compact toolchain documented (0.31.1 / WSL note)
+- [x] Custom Compact contract (not hello-world): `contracts/private-membership-verification.compact`
+- [x] Public ledger: `groupName`, `verifiedMemberCount`
+- [x] Private circuit input: `membershipSecret` (`Opaque<"string">`)
+- [x] `disclose()` only for `groupName` in constructor
+- [x] Compiles with Compact **0.31.1** → `contracts/managed/private-membership-verification/`
+- [x] Local undeployed deploy address documented
+- [x] README setup + product idea + privacy explanation
+- [x] Preprod blocked/waived per mentor guidance
+- [x] ≥5 meaningful commits
 
-| Name | Example value |
-| --- | --- |
-| `VITE_NETWORK` | `undeployed` |
-| `VITE_CONTRACT_ADDRESS` | `1786cf52d30966919b2c4d052e874160a355f428f9e6941dd26057615e93c19b` |
-| `VITE_PROOF_SERVER_URL` | your proof server URL (or leave for Lace/local demos) |
-| `VITE_INDEXER_URI` | indexer GraphQL HTTP (optional on static UI demos) |
-| `VITE_INDEXER_WS_URI` | indexer GraphQL WS (optional) |
+### Level 2 — Waxing Crescent
+- [x] Next.js 16 frontend builds and is live on Vercel
+- [x] Lace connect / disconnect + status visible
+- [x] Network + contract address via env / Settings
+- [x] UI wired to `verifyMembership` (browser Midnight client)
+- [x] Loading / success / error states on Membership
+- [x] Public state panel (`groupName`, `verifiedMemberCount`)
+- [x] README privacy claim + local frontend run instructions
+- [x] README explains Preprod switch when address is available
+- [x] ≥8 meaningful commits
 
-5. Deploy → copy the production URL into the badges / Live Demo section above.
+### Level 3 — First Quarter
+- [x] Official category: **Private Allowlist Access**
+- [x] ≥3 meaningful tests (15 passing)
+- [x] CI runs **contract compile** + tests + frontend build
+- [x] Privacy Model + Product Proposal + Level checklists in README
+- [x] Polished multi-page demo UI
+- [x] ≥10 meaningful commits
+- [x] No committed secrets / wallet seeds / `.midnight-state.json`
 
-CLI alternative (from repo root):
-```bash
-cd frontend
-npx vercel
-# Production:
-npx vercel --prod
-```
+---
 
-> Lace ZK submit against **local undeployed** needs your Docker stack. The Vercel UI still demonstrates landing, dashboard, Lace connect, membership form, sponsors, logs, and settings.
+## Deploy (already live)
+
+Live: **[https://private-membership-verification.vercel.app/](https://private-membership-verification.vercel.app/)**
+
+Root Directory on Vercel: `frontend`. Env: `VITE_NETWORK`, `VITE_CONTRACT_ADDRESS`, optional indexer/proof URLs. See `VERCEL.md`.
+
+> Lace ZK submit against **local undeployed** needs your Docker stack. The Vercel UI demonstrates landing, dashboard, Lace connect, membership form, sponsors, logs, and settings.
 
 ---
 

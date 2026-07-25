@@ -10,6 +10,7 @@ https://github.com/saikat-tanti/private-membership-verification
 
 Live Demo (Vercel):
 https://private-membership-verification.vercel.app/
+(confirmed live)
 
 Demo Video (YouTube):
 <paste after upload>

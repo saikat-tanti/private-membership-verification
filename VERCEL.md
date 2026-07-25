@@ -2,7 +2,7 @@
 
 ## One-time project setup
 1. https://vercel.com/new → Import `saikat-tanti/private-membership-verification`
-2. **Root Directory**: `frontend` (critical)
+2. **Root Directory**: `frontend` (critical — full repo is still cloned, so `../contracts/managed` is available)
 3. Framework: Next.js
 4. Env vars (Production + Preview):
 
@@ -10,9 +10,14 @@
 VITE_NETWORK=undeployed
 VITE_CONTRACT_ADDRESS=1786cf52d30966919b2c4d052e874160a355f428f9e6941dd26057615e93c19b
 VITE_PROOF_SERVER_URL=http://localhost:6300
+NODE_OPTIONS=--max-old-space-size=4096
 ```
 
-5. Deploy → paste the URL into `README.md` badges (replace `private-membership-verification.vercel.app` if Vercel assigns a different slug).
+5. Ensure `contracts/managed/private-membership-verification/` is **committed** (required by `prebuild` → midnight-client bundle).
+6. Deploy → paste the URL into `README.md` badges.
+
+## Why the previous build failed
+`[copy-contract-assets] managed contract missing` means Vercel didn’t have compiled Compact output. That folder was gitignored; it must be in the repo for frontend deploys.
 
 ## CLI
 ```bash

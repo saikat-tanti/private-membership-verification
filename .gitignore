@@ -17,8 +17,10 @@ frontend/out/
 .env.*.local
 frontend/.env.local
 
-# Contract artifacts
-contracts/managed/
+# Contract artifacts — keep compiled PMV output for Vercel/frontend builds
+contracts/managed/*
+!contracts/managed/private-membership-verification/
+!contracts/managed/private-membership-verification/**
 
 # Deployment info
 deployment.json

@@ -46,8 +46,14 @@ await build({
     nodePolyfills({ include: ['buffer', 'process', 'util', 'stream', 'events'] }),
   ],
   resolve: {
+    // Managed contract lives outside frontend/; pin deps into frontend/node_modules
+    // so Vercel (monorepo root package.json present) does not fail resolution.
     alias: {
       '@contract': contractDir,
+      '@midnight-ntwrk/compact-runtime': path.resolve(
+        root,
+        'node_modules/@midnight-ntwrk/compact-runtime',
+      ),
       'object-inspect': path.resolve(root, 'lib/shims/object-inspect.js'),
       'vite-plugin-node-polyfills/shims/buffer': path.resolve(
         root,
@@ -73,9 +79,9 @@ await build({
     outDir: path.resolve(root, 'public'),
     emptyOutDir: false,
     target: 'esnext',
-  },
-  optimizeDeps: {
-    exclude: ['@midnight-ntwrk/compact-runtime'],
+    commonjsOptions: {
+      include: [/node_modules/, /contracts\/managed/],
+    },
   },
   define: {
     'process.env.NODE_ENV': JSON.stringify('production'),

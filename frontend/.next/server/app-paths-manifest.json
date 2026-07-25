@@ -1,3 +1,12 @@
 {
-  "/page": "app/page.js"
+  "/_not-found/page": "app/_not-found/page.js",
+  "/_global-error/page": "app/_global-error/page.js",
+  "/api/ledger/route": "app/api/ledger/route.js",
+  "/api/verify/route": "app/api/verify/route.js",
+  "/page": "app/page.js",
+  "/(app)/dashboard/page": "app/(app)/dashboard/page.js",
+  "/(app)/logs/page": "app/(app)/logs/page.js",
+  "/(app)/membership/page": "app/(app)/membership/page.js",
+  "/(app)/settings/page": "app/(app)/settings/page.js",
+  "/(app)/sponsors/page": "app/(app)/sponsors/page.js"
 }

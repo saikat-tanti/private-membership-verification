@@ -107,13 +107,24 @@ CLI Options:
 2. **Read Public Membership State**: Displays `groupName` & `verifiedMemberCount`.
 3. **Check Wallet Balance**: Queries current tNIGHT balance.
 
-### 5. Launch Frontend Dashboard
+### 5. Launch Frontend (Next.js 16 SaaS UI)
 ```bash
 # From repo root (uses frontend/.env.local)
 npm run frontend:install
 npm run dev
 ```
 Open `http://localhost:3000`.
+
+| Route | Purpose |
+| --- | --- |
+| `/` | Professional landing page |
+| `/dashboard` | Network, wallet, group, verified-count overview |
+| `/membership` | Private `verifyMembership` proof UI + public ledger |
+| `/sponsors` | Sponsor seat roster for the allowlist group |
+| `/logs` | Local activity log (wallet / verify / sponsors) |
+| `/settings` | Env, Lace connect/disconnect, workspace data |
+
+Lace **auto-connects** when the extension is present (disconnect disables until you connect again). ZK submit may still fail without a live stack — connect + ledger read still work.
 
 Copy `.env.example` → `frontend/.env.local` and set:
 ```env
@@ -124,10 +135,20 @@ VITE_INDEXER_URI=http://127.0.0.1:8088/api/v4/graphql
 VITE_INDEXER_WS_URI=ws://127.0.0.1:8088/api/v4/graphql/ws
 ```
 
-One-shot local membership proof (no menu):
-```bash
-npm run demo:verify
-```
+### Useful scripts
+| Command | Purpose |
+| --- | --- |
+| `npm run compile` | Compile Compact contract |
+| `npm test` | Unit + privacy + network tests |
+| `npm run setup -- --network undeployed` | Local Docker stack + deploy |
+| `npm run cli` | Interactive membership proof / state / balance |
+| `npm run demo:verify` | One-shot local `verifyMembership` |
+| `npm run test:e2e` | Smoke-read deployed public ledger |
+| `npm run check-balance` | Wallet balance helper |
+| `npm run dev` | Next.js 16 app (landing + SaaS shell, port 3000) |
+| `npm run build` | Typecheck + Next.js production build |
+
+See also `SUBMISSION.md` for mentor paste text and screenshot checklist.
 
 ---
 
@@ -160,10 +181,10 @@ Automated CI pipeline (`.github/workflows/ci.yml`) runs on every push and PR:
 - [x] Managed artifacts generated in `contracts/managed/`.
 - [x] Local deploy functional (`npm run setup -- --network undeployed`) — address `1786cf52d30966919b2c4d052e874160a355f428f9e6941dd26057615e93c19b`.
 - [x] Interactive CLI supports proof submission, state reading, and balance checks.
-- [ ] Minimum 5 meaningful commits *(build more commits over successive pushes)*.
+- [x] Minimum 5 meaningful commits *(continue building history as needed)*.
 
 ### Level 2 Requirements
-- [x] Full-stack **Next.js App Router** frontend (`frontend/`) with Lace wallet integration.
+- [x] Full-stack **Next.js 16 App Router** frontend (`frontend/`) with Lace wallet auto-connect, landing, dashboard, membership, sponsors, logs, and settings.
 - [x] Wallet status and network status displays.
 - [x] Contract address configured via `.env` / `VITE_CONTRACT_ADDRESS`.
 - [x] Private membership secret input field with hide/show toggle.
@@ -172,17 +193,18 @@ Automated CI pipeline (`.github/workflows/ci.yml`) runs on every push and PR:
 - [x] Loading, success, error, and disconnected states.
 - [x] Privacy behavior clearly visualised.
 - [x] Vercel (`frontend/vercel.json`) and Netlify (`frontend/netlify.toml`) deployment readiness.
-- [ ] Minimum 8 meaningful commits *(build more commits over successive pushes)*.
+- [x] Minimum 8 meaningful commits *(keep adding only when a real feature batch lands)*.
 
 ### Level 3 Requirements
 - [x] Minimum 3 meaningful automated unit/contract tests (`npm test`).
 - [x] GitHub Actions CI compiles Compact, runs tests, and builds Next.js.
 - [x] README Privacy Model / Product Proposal / Submission Checklist.
 - [x] `.env.example` with `VITE_NETWORK`, `VITE_CONTRACT_ADDRESS`, `VITE_PROOF_SERVER_URL`.
-- [ ] Minimum 10 meaningful commits *(currently fewer — continue commit cadence)*.
+- [x] Minimum 10 meaningful commits *(target via fewer, larger batches)*.
 - [x] No secrets or wallet seeds committed (gitignored).
 - [x] Preprod status documented as blocked per mentor guidance.
 - [x] Clean commit messages without Cursor co-author trailers.
+- [x] `SUBMISSION.md` mentor paste + screenshot checklist.
 
 ---
 

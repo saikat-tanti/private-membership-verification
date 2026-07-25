@@ -12,6 +12,19 @@ const nextConfig = {
     VITE_INDEXER_URI: process.env.VITE_INDEXER_URI ?? '',
     VITE_INDEXER_WS_URI: process.env.VITE_INDEXER_WS_URI ?? '',
   },
+  // Pin app root so Next does not treat the monorepo parent lockfile as workspace root.
+  turbopack: {
+    root: __dirname,
+    resolveAlias: {
+      '@contract': path.resolve(
+        __dirname,
+        '..',
+        'contracts',
+        'managed',
+        'private-membership-verification',
+      ),
+    },
+  },
   // Midnight ZK client is prebundled to public/midnight-client.js (see scripts/).
   webpack: (config) => {
     config.resolve.alias = {

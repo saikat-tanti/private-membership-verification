@@ -1,27 +1,37 @@
 import type { Metadata } from 'next';
-import { Space_Grotesk, Outfit } from 'next/font/google';
+import { Instrument_Serif, IBM_Plex_Sans } from 'next/font/google';
+import { Providers } from '@/components/providers';
 import './globals.css';
 
-const display = Space_Grotesk({
+const display = Instrument_Serif({
   subsets: ['latin'],
-  variable: '--font-display',
+  weight: '400',
+  variable: '--font-display-loaded',
+  display: 'swap',
 });
 
-const body = Outfit({
+const body = IBM_Plex_Sans({
   subsets: ['latin'],
-  variable: '--font-body',
+  weight: ['400', '500', '600'],
+  variable: '--font-body-loaded',
+  display: 'swap',
 });
 
 export const metadata: Metadata = {
-  title: 'Private Membership Verification',
+  title: {
+    default: 'Private Membership',
+    template: '%s · Private Membership',
+  },
   description:
-    'Prove private allowlist membership on Midnight without revealing your secret or identity.',
+    'Enterprise private allowlist access on Midnight — prove membership without revealing secrets or identity.',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${display.variable} ${body.variable}`}>
-      <body>{children}</body>
+      <body className="font-sans antialiased">
+        <Providers>{children}</Providers>
+      </body>
     </html>
   );
 }

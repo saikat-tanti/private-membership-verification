@@ -43,7 +43,11 @@ jobs:
         run: npm test
 
       - name: Install frontend dependencies
-        run: npm --prefix frontend ci || npm --prefix frontend install
+        run: npm --prefix frontend ci
 
       - name: Build Next.js frontend
         run: npm --prefix frontend run build
+        env:
+          VITE_NETWORK: undeployed
+          VITE_CONTRACT_ADDRESS: '0000000000000000000000000000000000000000000000000000000000000000'
+          VITE_PROOF_SERVER_URL: http://localhost:6300

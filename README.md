@@ -109,11 +109,25 @@ CLI Options:
 
 ### 5. Launch Frontend Dashboard
 ```bash
-cd frontend
-npm install
+# From repo root (uses frontend/.env.local)
+npm run frontend:install
 npm run dev
 ```
-Open `http://localhost:3000` in your browser.
+Open `http://localhost:3000`.
+
+Copy `.env.example` → `frontend/.env.local` and set:
+```env
+VITE_NETWORK=undeployed
+VITE_CONTRACT_ADDRESS=<address from undeployed deploy>
+VITE_PROOF_SERVER_URL=http://localhost:6300
+VITE_INDEXER_URI=http://127.0.0.1:8088/api/v4/graphql
+VITE_INDEXER_WS_URI=ws://127.0.0.1:8088/api/v4/graphql/ws
+```
+
+One-shot local membership proof (no menu):
+```bash
+npm run demo:verify
+```
 
 ---
 
@@ -144,9 +158,9 @@ Automated CI pipeline (`.github/workflows/ci.yml`) runs on every push and PR:
 - [x] Main circuit `verifyMembership` keeps secret private and increments counter.
 - [x] Constructor uses `disclose()` only for `groupName`.
 - [x] Managed artifacts generated in `contracts/managed/`.
-- [x] Local deploy functional (`npm run setup -- --network undeployed`).
+- [x] Local deploy functional (`npm run setup -- --network undeployed`) — address `1786cf52d30966919b2c4d052e874160a355f428f9e6941dd26057615e93c19b`.
 - [x] Interactive CLI supports proof submission, state reading, and balance checks.
-- [x] Minimum 5 meaningful commits *(pending — create commits before GitHub submit)*.
+- [ ] Minimum 5 meaningful commits *(build more commits over successive pushes)*.
 
 ### Level 2 Requirements
 - [x] Full-stack **Next.js App Router** frontend (`frontend/`) with Lace wallet integration.
@@ -157,19 +171,18 @@ Automated CI pipeline (`.github/workflows/ci.yml`) runs on every push and PR:
 - [x] Public state panel displaying `groupName` and `verifiedMemberCount`.
 - [x] Loading, success, error, and disconnected states.
 - [x] Privacy behavior clearly visualised.
-- [x] Vercel / Netlify ready (static Next export path optional).
-- [ ] Minimum 8 meaningful commits *(git history still empty — commit before submit)*.
+- [x] Vercel (`frontend/vercel.json`) and Netlify (`frontend/netlify.toml`) deployment readiness.
+- [ ] Minimum 8 meaningful commits *(build more commits over successive pushes)*.
 
 ### Level 3 Requirements
 - [x] Minimum 3 meaningful automated unit/contract tests (`npm test`).
-- [x] GitHub Actions CI workflow (`.github/workflows/ci.yml`) including contract compilation.
-- [x] Comprehensive Privacy Model breakdown (Disclosed vs Private).
-- [x] Formal Product Proposal (Category, Problem, Users, Midnight Privacy).
-- [x] Submission Checklist in README.md.
-- [x] `.env.example` provided.
-- [x] Minimum 10 meaningful commits.
-- [x] No secrets, private keys, or wallet seeds committed.
-- [x] Clean commit history without co-author trailers.
+- [x] GitHub Actions CI compiles Compact, runs tests, and builds Next.js.
+- [x] README Privacy Model / Product Proposal / Submission Checklist.
+- [x] `.env.example` with `VITE_NETWORK`, `VITE_CONTRACT_ADDRESS`, `VITE_PROOF_SERVER_URL`.
+- [ ] Minimum 10 meaningful commits *(currently fewer — continue commit cadence)*.
+- [x] No secrets or wallet seeds committed (gitignored).
+- [x] Preprod status documented as blocked per mentor guidance.
+- [x] Clean commit messages without Cursor co-author trailers.
 
 ---
 

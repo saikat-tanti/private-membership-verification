@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "type": "module",
   "description": "Private Membership Verification dApp on Midnight Network",
-  "author": "Antigravity Team",
+  "author": "SAIKAT TANTI",
   "license": "MIT",
   "scripts": {
     "compile": "compact compile contracts/private-membership-verification.compact contracts/managed/private-membership-verification",
@@ -17,6 +17,7 @@
     "proof-server:stop": "docker compose down",
     "clean": "rm -rf contracts/managed",
     "test": "node --import tsx --test src/test/contract.test.ts",
+    "demo:verify": "npx tsx scripts/demo-verify.ts",
     "frontend:install": "npm --prefix frontend install",
     "dev": "npm --prefix frontend run dev",
     "test:e2e": "tsx scripts/e2e-check.ts"

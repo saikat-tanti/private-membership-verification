@@ -7,10 +7,12 @@ import fs from 'node:fs';
 import { build } from 'vite';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { createRequire } from 'node:module';
 import { nodePolyfills } from 'vite-plugin-node-polyfills';
 import wasm from 'vite-plugin-wasm';
 import topLevelAwait from 'vite-plugin-top-level-await';
 
+const require = createRequire(import.meta.url);
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, '..');
 const contractDir = path.resolve(
@@ -22,6 +24,18 @@ const contractDir = path.resolve(
   'private-membership-verification',
 );
 const outFile = path.resolve(root, 'public', 'midnight-client.js');
+
+const findNodeModule = (subpath) => {
+  const local = path.resolve(root, 'node_modules', subpath);
+  if (fs.existsSync(local)) return local;
+  const monorepoRoot = path.resolve(root, '..', 'node_modules', subpath);
+  if (fs.existsSync(monorepoRoot)) return monorepoRoot;
+  try {
+    return require.resolve(subpath, { paths: [root, path.resolve(root, '..')] });
+  } catch {
+    return local;
+  }
+};
 
 if (!fs.existsSync(contractDir)) {
   if (fs.existsSync(outFile) && process.env.ALLOW_STALE_MIDNIGHT_CLIENT === '1') {
@@ -47,26 +61,20 @@ await build({
     nodePolyfills({ include: ['buffer', 'process', 'util', 'stream', 'events'] }),
   ],
   resolve: {
-    // Managed contract lives outside membership-ui/; pin deps into local node_modules
-    // so Vercel (monorepo root package.json present) does not fail resolution.
+    // Managed contract lives outside membership-ui/; dynamically resolve deps
+    // so hoisted packages in npm workspaces (e.g. CI / Vercel) resolve cleanly.
     alias: {
       '@contract': contractDir,
-      '@midnight-ntwrk/compact-runtime': path.resolve(
-        root,
-        'node_modules/@midnight-ntwrk/compact-runtime',
-      ),
+      '@midnight-ntwrk/compact-runtime': findNodeModule('@midnight-ntwrk/compact-runtime'),
       'object-inspect': path.resolve(root, 'lib/shims/object-inspect.js'),
-      'vite-plugin-node-polyfills/shims/buffer': path.resolve(
-        root,
-        'node_modules/vite-plugin-node-polyfills/shims/buffer/dist/index.js',
+      'vite-plugin-node-polyfills/shims/buffer': findNodeModule(
+        'vite-plugin-node-polyfills/shims/buffer/dist/index.js',
       ),
-      'vite-plugin-node-polyfills/shims/global': path.resolve(
-        root,
-        'node_modules/vite-plugin-node-polyfills/shims/global/dist/index.js',
+      'vite-plugin-node-polyfills/shims/global': findNodeModule(
+        'vite-plugin-node-polyfills/shims/global/dist/index.js',
       ),
-      'vite-plugin-node-polyfills/shims/process': path.resolve(
-        root,
-        'node_modules/vite-plugin-node-polyfills/shims/process/dist/index.js',
+      'vite-plugin-node-polyfills/shims/process': findNodeModule(
+        'vite-plugin-node-polyfills/shims/process/dist/index.js',
       ),
     },
   },

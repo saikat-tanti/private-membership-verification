@@ -1,6 +1,6 @@
 # Dependencies
 node_modules/
-frontend/node_modules/
+membership-ui/node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
@@ -8,19 +8,19 @@ yarn-error.log*
 # Build output
 dist/
 build/
-frontend/.next/
-frontend/out/
+membership-ui/.next/
+membership-ui/out/
 
 # Environment variables
 .env
 .env.local
 .env.*.local
-frontend/.env.local
+membership-ui/.env.local
 
 # Contract artifacts — keep compiled PMV output for Vercel/frontend builds
-contracts/managed/*
-!contracts/managed/private-membership-verification/
-!contracts/managed/private-membership-verification/**
+contract/src/managed/*
+!contract/src/managed/private-membership-verification/
+!contract/src/managed/private-membership-verification/**
 
 # Deployment info
 deployment.json

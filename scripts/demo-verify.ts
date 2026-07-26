@@ -11,14 +11,14 @@ import { indexerPublicDataProvider } from '@midnight-ntwrk/midnight-js-indexer-p
 import { levelPrivateStateProvider } from '@midnight-ntwrk/midnight-js-level-private-state-provider';
 import { NodeZkConfigProvider } from '@midnight-ntwrk/midnight-js-node-zk-config-provider';
 import { CompiledContract } from '@midnight-ntwrk/midnight-js-protocol/compact-js';
-import { resolveNetwork, getDeployment, getOrCreateSeed, setActiveNetwork } from '../src/network.ts';
+import { resolveNetwork, getDeployment, getOrCreateSeed, setActiveNetwork } from '../membership-cli/src/network.ts';
 import {
   createWallet,
   persistWalletState,
   waitForWalletSync,
   unshieldedToken,
   type WalletContext,
-} from '../src/wallet.ts';
+} from '../membership-cli/src/wallet.ts';
 
 // @ts-expect-error
 globalThis.WebSocket = WebSocket;
@@ -35,7 +35,14 @@ if (!deployment?.address) {
 }
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const zkConfigPath = path.resolve(__dirname, '..', 'contracts', 'managed', 'private-membership-verification');
+const zkConfigPath = path.resolve(
+  __dirname,
+  '..',
+  'contract',
+  'src',
+  'managed',
+  'private-membership-verification',
+);
 const ContractMod = await import(pathToFileURL(path.join(zkConfigPath, 'contract', 'index.js')).href);
 
 const compiledContract = CompiledContract.make(

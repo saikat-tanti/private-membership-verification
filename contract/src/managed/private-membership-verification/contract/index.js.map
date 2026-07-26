@@ -1,0 +1,8 @@
+{
+  "version": 3,
+  "file": "index.js",
+  "sourceRoot": "../../../../",
+  "sources": ["contracts/private-membership-verification.compact"],
+  "names": [],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;EAqBA;;;;;;;;;;MAQA,AAAA,gBAGC;;;;;cAH+B,kBAAkC;;;;;;;;;;;yCAAlC,kBAAkC;;;;;;;;;kDAAlC,kBAAkC;;;OAGjE;;;;;;GATA;EAFD;;;;;UAAY,kBAAkC;;;;;;;;;;;;;;;;;;;;;;;IAH9C;;;;;;;;;yEAA0C;IAC1C;;;;;;;;;yEAA2C;IAGzC;;;;;;;2HAAqB,kBAAgB;;yEAA5B;;;;;;;GACV;EAMD,AAAA,mBAGC,4BAH+B,kBAAkC;UAC1D,gBAAmD,GAAhB,kBAAgB;UACzD,KAAmB;IAAnB;;;;;;;;;;6FAAA,KAAmB;;;;wEAAA;;GACpB;;;;;;;;;;;;;;;;IAdD;qCAAA;;;;;;;;;;;0GAA0C;KAAA;IAC1C;qCAAA;;;;;;;;;;;0GAA2C;KAAA;;;;;;;;;;"
+}

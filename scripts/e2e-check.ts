@@ -14,8 +14,8 @@ import { httpClientProofProvider } from '@midnight-ntwrk/midnight-js-http-client
 import { indexerPublicDataProvider } from '@midnight-ntwrk/midnight-js-indexer-public-data-provider';
 import { levelPrivateStateProvider } from '@midnight-ntwrk/midnight-js-level-private-state-provider';
 import { NodeZkConfigProvider } from '@midnight-ntwrk/midnight-js-node-zk-config-provider';
-import { resolveNetwork, getOrCreateSeed, getDeployment } from '../src/network';
-import { createWallet, persistWalletState, waitForWalletSync } from '../src/wallet';
+import { resolveNetwork, getOrCreateSeed, getDeployment } from '../membership-cli/src/network';
+import { createWallet, persistWalletState, waitForWalletSync } from '../membership-cli/src/wallet';
 import { CompiledContract } from '@midnight-ntwrk/midnight-js-protocol/compact-js';
 
 // @ts-expect-error wallet sync requires WebSocket
@@ -48,7 +48,8 @@ async function main() {
   const zkConfigPath = path.resolve(
     __dirname,
     '..',
-    'contracts',
+    'contract',
+    'src',
     'managed',
     'private-membership-verification',
   );

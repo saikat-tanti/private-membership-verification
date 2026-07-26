@@ -64,7 +64,7 @@ Category: Private Allowlist Access
 ```
 
 ## Screenshot checklist
-- [x] Landing / Dashboard / Membership / Sponsors / Logs / Settings (`frontend/public/*.png`)
+- [x] Landing / Dashboard / Membership / Sponsors / Logs / Settings (`membership-ui/public/*.png`)
 - [ ] `npm run compile` showing `verifyMembership`
 - [ ] Local deploy success + contract address
 - [ ] CLI or `npm run demo:verify` / public state read
@@ -75,4 +75,4 @@ Category: Private Allowlist Access
 - [ ] Optional: Preprod sync timeout log (`preprod-attempt.log`)
 
 ## Do not commit
-`.midnight-state.json`, `.env.local`, wallet seeds, `node_modules/`, `frontend/.next/`, `contracts/managed/`
+`.midnight-state.json`, `.env.local`, wallet seeds, `node_modules/`, `membership-ui/.next/`, `contract/src/managed/`

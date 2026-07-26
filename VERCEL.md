@@ -2,7 +2,7 @@
 
 ## One-time project setup
 1. https://vercel.com/new → Import `saikat-tanti/private-membership-verification`
-2. **Root Directory**: `frontend` (critical — full repo is still cloned, so `../contracts/managed` is available)
+2. **Root Directory**: `membership-ui` (critical — full repo is still cloned, so `../contract/src/managed` is available)
 3. Framework: Next.js
 4. Env vars (Production + Preview):
 
@@ -13,7 +13,7 @@ VITE_PROOF_SERVER_URL=http://localhost:6300
 NODE_OPTIONS=--max-old-space-size=4096
 ```
 
-5. Ensure `contracts/managed/private-membership-verification/` is **committed** (required by `prebuild` → midnight-client bundle).
+5. Ensure `contract/src/managed/private-membership-verification/` is **committed** (required by `prebuild` → midnight-client bundle).
 6. Deploy → paste the URL into `README.md` badges.
 
 ## Why the previous build failed
@@ -21,7 +21,7 @@ NODE_OPTIONS=--max-old-space-size=4096
 
 ## CLI
 ```bash
-cd frontend
+cd membership-ui
 npx vercel login
 npx vercel          # preview
 npx vercel --prod   # production

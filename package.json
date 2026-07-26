@@ -5,21 +5,29 @@
   "description": "Private Membership Verification dApp on Midnight Network",
   "author": "SAIKAT TANTI",
   "license": "MIT",
+  "private": true,
+  "workspaces": {
+    "packages": [
+      "membership-cli",
+      "membership-ui",
+      "api",
+      "contract"
+    ]
+  },
   "scripts": {
-    "compile": "compact compile contracts/private-membership-verification.compact contracts/managed/private-membership-verification",
-    "build": "npx tsc --noEmit && (cd frontend && npm run build)",
-    "setup": "npx tsx src/setup.ts",
-    "deploy": "npx tsx src/deploy.ts",
-    "cli": "npx tsx src/cli.ts",
-    "check-balance": "npx tsx src/check-balance.ts",
-    "network": "npx tsx src/network.ts",
+    "compile": "npm run compact --workspace=@midnight-ntwrk/membership-contract",
+    "build": "npm run typecheck --workspace=@midnight-ntwrk/membership-cli && npm run build --workspace=@midnight-ntwrk/membership-ui",
+    "setup": "npx tsx membership-cli/src/setup.ts",
+    "deploy": "npx tsx membership-cli/src/deploy.ts",
+    "cli": "npx tsx membership-cli/src/cli.ts",
+    "check-balance": "npx tsx membership-cli/src/check-balance.ts",
+    "network": "npx tsx membership-cli/src/network.ts",
     "proof-server:start": "docker compose up -d",
     "proof-server:stop": "docker compose down",
-    "clean": "rm -rf contracts/managed",
-    "test": "node --import tsx --test src/test/*.test.ts",
+    "clean": "rm -rf contract/src/managed",
+    "test": "node --import tsx --test membership-cli/src/test/*.test.ts",
     "demo:verify": "npx tsx scripts/demo-verify.ts",
-    "frontend:install": "npm --prefix frontend install",
-    "dev": "npm --prefix frontend run dev",
+    "dev": "npm run dev --workspace=@midnight-ntwrk/membership-ui",
     "test:e2e": "tsx scripts/e2e-check.ts"
   },
   "dependencies": {

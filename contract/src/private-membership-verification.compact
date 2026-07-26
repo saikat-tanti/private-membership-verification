@@ -1,0 +1,33 @@
+pragma language_version >= 0.23;
+
+import CompactStandardLibrary;
+
+/**
+ * Private Membership Verification
+ *
+ * Official Level 3 Category: Private Allowlist Access
+ *
+ * Public ledger (visible on-chain):
+ *   - groupName            — community / DAO / allowlist name
+ *   - verifiedMemberCount  — total successful membership verifications
+ *
+ * Private witness (never written to the ledger):
+ *   - membershipSecret     — Opaque<"string"> circuit input.
+ *     disclose() is intentionally NOT called on this value.
+ */
+
+export ledger groupName: Opaque<"string">;
+export ledger verifiedMemberCount: Counter;
+
+constructor(initialGroupName: Opaque<"string">) {
+  groupName = disclose(initialGroupName);
+}
+
+/**
+ * Privately prove knowledge of a membership secret and record one verification.
+ * Only the incremented public counter becomes visible on-chain.
+ */
+export circuit verifyMembership(membershipSecret: Opaque<"string">): [] {
+  const _privateSecret: Opaque<"string"> = membershipSecret;
+  verifiedMemberCount.increment(1);
+}

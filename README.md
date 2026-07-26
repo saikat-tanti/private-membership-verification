@@ -110,19 +110,19 @@ Or paste the address in **Settings** and connect Lace on Preprod.
 ```bash
 git clone https://github.com/saikat-tanti/private-membership-verification.git
 cd private-membership-verification
-npm install && npm run frontend:install
+npm install && npm install
 
 export COMPACT_BACKEND=wasm   # PowerShell: $env:COMPACT_BACKEND="wasm"
 npm run compile
 npm run setup -- --network undeployed
 
-cp frontend/.env.example frontend/.env.local
+cp membership-ui/.env.example membership-ui/.env.local
 npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) or the [live demo](https://private-membership-verification.vercel.app/).
 
-### Env (`frontend/.env.local`)
+### Env (`membership-ui/.env.local`)
 
 ```env
 VITE_NETWORK=undeployed
@@ -136,7 +136,7 @@ VITE_INDEXER_WS_URI=ws://127.0.0.1:8088/api/v4/graphql/ws
 
 | Command | Purpose |
 | --- | --- |
-| `npm run compile` | Compact → `contracts/managed/` |
+| `npm run compile` | Compact → `contract/src/managed/` |
 | `npm test` | 15 contract / privacy / network tests |
 | `npm run setup -- --network undeployed` | Docker + local deploy |
 | `npm run cli` / `npm run demo:verify` | Membership helpers |
@@ -156,7 +156,7 @@ npm test
 
 ### Level 1 — New Moon
 - [x] Compact 0.31.1 toolchain documented
-- [x] Contract: `contracts/private-membership-verification.compact`
+- [x] Contract: `contract/src/private-membership-verification.compact`
 - [x] Public: `groupName`, `verifiedMemberCount`
 - [x] Private: `membershipSecret`
 - [x] `disclose()` only for `groupName`
@@ -190,22 +190,22 @@ npm test
 ## Screenshots
 
 ### Landing
-![Landing](frontend/public/landing.png)
+![Landing](membership-ui/public/landing.png)
 
 ### Dashboard
-![Dashboard](frontend/public/dashboard.png)
+![Dashboard](membership-ui/public/dashboard.png)
 
 ### Membership
-![Membership](frontend/public/membership.png)
+![Membership](membership-ui/public/membership.png)
 
 ### Sponsors
-![Sponsors](frontend/public/sponsor.png)
+![Sponsors](membership-ui/public/sponsor.png)
 
 ### Logs
-![Logs](frontend/public/log.png)
+![Logs](membership-ui/public/log.png)
 
 ### Settings
-![Settings](frontend/public/settings.png)
+![Settings](membership-ui/public/settings.png)
 
 ---
 

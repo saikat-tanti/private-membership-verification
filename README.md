@@ -3,6 +3,7 @@
 > Privacy-preserving zero-knowledge allowlist membership on the Midnight Network — prove you belong without revealing your secret or identity.
 
 [![Live Demo](https://img.shields.io/badge/Live_Demo-Vercel-000000?style=flat-square&logo=vercel)](https://private-membership-verification.vercel.app/)
+[![Demo Video](https://img.shields.io/badge/Demo_Video-YouTube-FF0000?style=flat-square&logo=youtube)](https://youtu.be/gnPuRBhZtxc)
 [![CI/CD](https://github.com/saikat-tanti/private-membership-verification/actions/workflows/ci.yml/badge.svg)](https://github.com/saikat-tanti/private-membership-verification/actions/workflows/ci.yml)
 [![Compact](https://img.shields.io/badge/Compact-0.31.1-06b6d4?style=flat-square)](https://docs.midnight.network)
 [![Node.js](https://img.shields.io/badge/Node.js-22+-10b981?style=flat-square)](https://nodejs.org)
@@ -15,9 +16,12 @@
 | Resource | URL |
 | --- | --- |
 | **Live demo** | [https://private-membership-verification.vercel.app/](https://private-membership-verification.vercel.app/) |
+| **Demo video** | [https://youtu.be/gnPuRBhZtxc](https://youtu.be/gnPuRBhZtxc) |
 | **GitHub** | [saikat-tanti/private-membership-verification](https://github.com/saikat-tanti/private-membership-verification) |
 | **CI/CD** | [`.github/workflows/ci.yml`](.github/workflows/ci.yml) |
+| **Proposal** | [PROPOSAL.md](PROPOSAL.md) |
 | **Local contract** | `1786cf52d30966919b2c4d052e874160a355f428f9e6941dd26057615e93c19b` (VIP Founders Club) |
+| **Preprod address (local)** | `1786cf52d30966919b2c4d052e874160a355f428f9e6941dd26057615e93c19b` |
 
 CI installs Compact **0.31.1**, runs `npm run compile`, `npm test`, and builds the Next.js frontend.
 
@@ -69,8 +73,9 @@ DAOs and gated communities often force members to reveal wallets or secrets on-c
 | Environment | Detail |
 | --- | --- |
 | Live UI | [private-membership-verification.vercel.app](https://private-membership-verification.vercel.app/) |
+| Demo video | [YouTube](https://youtu.be/gnPuRBhZtxc) |
 | Local undeployed | `1786cf52d30966919b2c4d052e874160a355f428f9e6941dd26057615e93c19b` |
-| Preprod | **BLOCKED / WAIVED** — no Preprod address claimed |
+| Preprod address (local) | `1786cf52d30966919b2c4d052e874160a355f428f9e6941dd26057615e93c19b` |
 
 ### Mentor guidance (Preprod)
 

@@ -2,7 +2,7 @@
 
 ## One-time project setup
 1. https://vercel.com/new → Import `saikat-tanti/private-membership-verification`
-2. **Root Directory**: `membership-ui` (critical — full repo is still cloned, so `../contract/src/managed` is available)
+2. **Root Directory**: `membership-ui` (critical — set in Vercel Settings -> General -> Root Directory)
 3. Framework: Next.js
 4. Env vars (Production + Preview):
 

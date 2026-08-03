@@ -5,6 +5,7 @@
 [![Live Demo](https://img.shields.io/badge/Live_Demo-Vercel-000000?style=flat-square&logo=vercel)](https://private-membership-verification.vercel.app/)
 [![Demo Video](https://img.shields.io/badge/Demo_Video-YouTube-FF0000?style=flat-square&logo=youtube)](https://youtu.be/gnPuRBhZtxc)
 [![CI/CD](https://github.com/saikat-tanti/private-membership-verification/actions/workflows/ci.yml/badge.svg)](https://github.com/saikat-tanti/private-membership-verification/actions/workflows/ci.yml)
+[![Network](https://img.shields.io/badge/Network-Preview-0ea5e9?style=flat-square)](docs/PREVIEW_STATUS.md)
 [![Compact](https://img.shields.io/badge/Compact-0.31.1-06b6d4?style=flat-square)](https://docs.midnight.network)
 [![Node.js](https://img.shields.io/badge/Node.js-22+-10b981?style=flat-square)](https://nodejs.org)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](LICENSE)
@@ -20,10 +21,14 @@
 | **GitHub** | [saikat-tanti/private-membership-verification](https://github.com/saikat-tanti/private-membership-verification) |
 | **CI/CD** | [`.github/workflows/ci.yml`](.github/workflows/ci.yml) |
 | **Proposal** | [PROPOSAL.md](PROPOSAL.md) |
+| **Preview address** | `67dc390b3d1a7771f1235e6338d09a8f452a7099ae5d6ef1ae701250da74af78` — [docs/PREVIEW_STATUS.md](docs/PREVIEW_STATUS.md) |
+| **Explorer** | [Preview contract](https://preview.midnightexplorer.com/contracts/0x67dc390b3d1a7771f1235e6338d09a8f452a7099ae5d6ef1ae701250da74af78) |
 | **Local contract** | `1786cf52d30966919b2c4d052e874160a355f428f9e6941dd26057615e93c19b` (VIP Founders Club) |
-| **Preprod address (local)** | `1786cf52d30966919b2c4d052e874160a355f428f9e6941dd26057615e93c19b` |
+| **Preprod address (historical / local)** | `1786cf52d30966919b2c4d052e874160a355f428f9e6941dd26057615e93c19b` |
 
 CI installs Compact **0.31.1**, runs `npm run compile`, `npm test`, and builds the Next.js frontend.
+
+**Verified on Midnight Preview** via **1AM**: contract deployed (`VIP Founders Club`). Prefer Settings → paste the Preview address (faster than re-deploying).
 
 ---
 
@@ -31,11 +36,11 @@ CI installs Compact **0.31.1**, runs `npm run compile`, `npm test`, and builds t
 
 - [x] Privacy dApp with private `membershipSecret` and public `groupName` + `verifiedMemberCount`
 - [x] Live demo on Vercel
-- [x] Lace wallet connect / disconnect + status UI
+- [x] Lace / **1AM** wallet connect / disconnect + status UI
 - [x] 15/15 tests passing (`npm test`)
 - [x] CI: Compact compile + tests + frontend build
 - [x] Local undeployed contract deployed and documented
-- [x] Preprod blocked/waived per mentor guidance (full-stack submitted first)
+- [x] **Preview** browser Deploy completed (`67dc390b…da74af78`)
 - [x] Meaningful commit history on `main`
 
 ---
@@ -83,15 +88,25 @@ DAOs and gated communities often force members to reveal wallets or secrets on-c
 
 Preprod wallet sync timed out (`Wallet.Sync`) before deploy completed. Submission includes local undeployed deploy, live full-stack UI, tests, and CI.
 
-### Switch to Preprod later
+### Switch to Preview (Rise-In July migration)
+
+```env
+VITE_NETWORK=preview
+VITE_CONTRACT_ADDRESS=<preview-contract-address>
+VITE_INDEXER_URI=https://indexer.preview.midnight.network/api/v4/graphql
+VITE_INDEXER_WS_URI=wss://indexer.preview.midnight.network/api/v4/graphql/ws
+VITE_PROOF_SERVER_URL=http://127.0.0.1:6300
+```
+
+Or paste the address in **Settings** and connect 1AM/Lace on **Preview**. Faucet: https://faucet.preview.midnight.network/
+
+### Switch to Preprod (when infrastructure recovers)
 
 ```env
 VITE_NETWORK=preprod
 VITE_CONTRACT_ADDRESS=<preprod-contract-address>
 VITE_PROOF_SERVER_URL=https://proof-server.preprod.midnight.network
 ```
-
-Or paste the address in **Settings** and connect Lace on Preprod.
 
 ---
 

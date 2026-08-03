@@ -67,6 +67,7 @@ await build({
       '@contract': contractDir,
       '@midnight-ntwrk/compact-runtime': findNodeModule('@midnight-ntwrk/compact-runtime'),
       'object-inspect': path.resolve(root, 'lib/shims/object-inspect.js'),
+      'cross-fetch': path.resolve(root, 'lib/shims/cross-fetch-offset-fix.ts'),
       'vite-plugin-node-polyfills/shims/buffer': findNodeModule(
         'vite-plugin-node-polyfills/shims/buffer/dist/index.js',
       ),

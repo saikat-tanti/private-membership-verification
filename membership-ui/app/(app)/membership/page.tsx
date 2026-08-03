@@ -7,31 +7,13 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useWallet } from '@/lib/wallet-context';
 import { pushActivity } from '@/lib/activity';
-import type { ConnectedWallet } from '@/lib/lace';
-import type { AppConfig } from '@/lib/config';
+import { loadMidnightClient } from '@/lib/midnight-client';
 
 type Status =
   | { kind: 'idle' }
   | { kind: 'submitting' }
   | { kind: 'success'; txId: string; blockHeight: number }
   | { kind: 'error'; message: string };
-
-async function contractApi(): Promise<{
-  submitVerifyMembership: (
-    config: AppConfig,
-    wallet: ConnectedWallet,
-    secret: string,
-  ) => Promise<{ txId: string; blockHeight: number }>;
-}> {
-  const loader = new Function('return import("/midnight-client.js")') as () => Promise<{
-    submitVerifyMembership: (
-      config: AppConfig,
-      wallet: ConnectedWallet,
-      secret: string,
-    ) => Promise<{ txId: string; blockHeight: number }>;
-  }>;
-  return loader();
-}
 
 export default function MembershipPage() {
   const { config, wallet, connect, connecting, publicState, refreshPublicState } = useWallet();
@@ -45,8 +27,12 @@ export default function MembershipPage() {
     setStatus({ kind: 'submitting' });
     pushActivity('verify_attempt', 'Membership verification submitted');
     try {
-      const { submitVerifyMembership } = await contractApi();
-      const { txId, blockHeight } = await submitVerifyMembership(config, wallet, secret);
+      const client = await loadMidnightClient();
+      const { txId, blockHeight } = await client.submitVerifyMembership(
+        config as never,
+        wallet as never,
+        secret as never,
+      );
       setStatus({ kind: 'success', txId, blockHeight });
       setSecret('');
       pushActivity('verify_success', 'Membership verified on-chain', `tx ${txId}`);

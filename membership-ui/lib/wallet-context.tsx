@@ -22,6 +22,7 @@ import {
   LACE_STORE_URL,
   isLaceInstalled,
 } from '@/lib/lace';
+import { loadMidnightClient } from '@/lib/midnight-client';
 
 const AUTOCONNECT_KEY = 'pmv:lace-autoconnect';
 
@@ -36,6 +37,8 @@ type WalletContextValue = {
   laceReady: boolean;
   wallet: ConnectedWallet | null;
   connecting: boolean;
+  deploying: boolean;
+  deployError: string | null;
   walletError: string | null;
   publicState: PublicState | null;
   stateLoading: boolean;
@@ -43,6 +46,7 @@ type WalletContextValue = {
   laceStoreUrl: string;
   connect: () => Promise<void>;
   disconnect: () => void;
+  deploy: (groupName?: string) => Promise<string | null>;
   refreshPublicState: () => Promise<void>;
   setContractAddress: (address: string) => void;
   clearContractAddressOverride: () => void;
@@ -50,29 +54,14 @@ type WalletContextValue = {
 
 const WalletContext = createContext<WalletContextValue | null>(null);
 
-async function contractApi(): Promise<{
-  getPublicState: (
-    config: AppConfig,
-    indexer: string,
-    indexerWs: string,
-  ) => Promise<PublicState | null>;
-}> {
-  const loader = new Function('return import("/midnight-client.js")') as () => Promise<{
-    getPublicState: (
-      config: AppConfig,
-      indexer: string,
-      indexerWs: string,
-    ) => Promise<PublicState | null>;
-  }>;
-  return loader();
-}
-
 export function WalletProvider({ children }: { children: ReactNode }) {
   const [config, setConfig] = useState<AppConfig>(() => loadConfig());
   const [laceInstalled, setLaceInstalled] = useState(false);
   const [laceReady, setLaceReady] = useState(false);
   const [wallet, setWallet] = useState<ConnectedWallet | null>(null);
   const [connecting, setConnecting] = useState(false);
+  const [deploying, setDeploying] = useState(false);
+  const [deployError, setDeployError] = useState<string | null>(null);
   const [walletError, setWalletError] = useState<string | null>(null);
   const [publicState, setPublicState] = useState<PublicState | null>(null);
   const [stateLoading, setStateLoading] = useState(false);
@@ -85,7 +74,6 @@ export function WalletProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const onConfig = () => reloadConfig();
     window.addEventListener('pmv:config', onConfig);
-    // Re-read after hydration so localStorage overrides apply.
     reloadConfig();
     return () => window.removeEventListener('pmv:config', onConfig);
   }, [reloadConfig]);
@@ -110,14 +98,18 @@ export function WalletProvider({ children }: { children: ReactNode }) {
     const indexer = config.indexerUri ?? wallet?.uris.indexerUri;
     const indexerWs = config.indexerWsUri ?? wallet?.uris.indexerWsUri;
     if (!indexer || !indexerWs) {
-      setStateError('No indexer URI. Connect Lace or set VITE_INDEXER_URI / VITE_INDEXER_WS_URI.');
+      setStateError('No indexer URI. Connect 1AM/Lace or set VITE_INDEXER_URI / VITE_INDEXER_WS_URI.');
       return;
     }
     setStateLoading(true);
     setStateError(null);
     try {
-      const { getPublicState } = await contractApi();
-      const s = await getPublicState(config, indexer, indexerWs);
+      const client = await loadMidnightClient();
+      const s = (await client.getPublicState(
+        config as never,
+        indexer as never,
+        indexerWs as never,
+      )) as PublicState | null;
       setPublicState(s);
     } catch (err) {
       setStateError(err instanceof Error ? err.message : String(err));
@@ -133,7 +125,7 @@ export function WalletProvider({ children }: { children: ReactNode }) {
       const w = await connectLace(config.network);
       setWallet(w);
       window.localStorage.setItem(AUTOCONNECT_KEY, '1');
-      pushActivity('wallet_connect', 'Lace wallet connected', w.state.address);
+      pushActivity('wallet_connect', 'Wallet connected', w.state.address);
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
       setWalletError(message);
@@ -146,8 +138,47 @@ export function WalletProvider({ children }: { children: ReactNode }) {
   const disconnect = useCallback(() => {
     setWallet(null);
     window.localStorage.setItem(AUTOCONNECT_KEY, '0');
-    pushActivity('wallet_disconnect', 'Lace wallet disconnected');
+    pushActivity('wallet_disconnect', 'Wallet disconnected');
   }, []);
+
+  const deploy = useCallback(
+    async (groupName?: string) => {
+      if (!wallet) {
+        setDeployError('Connect 1AM (Preview) or Lace first.');
+        return null;
+      }
+      if (deploying) {
+        setDeployError('Deploy already in progress.');
+        return null;
+      }
+      setDeploying(true);
+      setDeployError(null);
+      pushActivity('deploy_attempt', 'Deploying membership contract…');
+      try {
+        const client = await loadMidnightClient();
+        const { contractAddress } = await client.deployMembershipContract(
+          config as never,
+          wallet as never,
+          groupName as never,
+        );
+        setContractAddress(contractAddress);
+        pushActivity('deploy_success', 'Contract deployed on Preview', contractAddress);
+        void refreshPublicState();
+        return contractAddress;
+      } catch (err) {
+        const message = err instanceof Error ? err.message : String(err);
+        const friendly = /duplicate|already pending/i.test(message)
+          ? 'Wallet still has a pending deploy. Open 1AM → approve or reject that request, wait ~30s, then Deploy once.'
+          : message;
+        setDeployError(friendly);
+        pushActivity('deploy_error', 'Deploy failed', friendly);
+        return null;
+      } finally {
+        setDeploying(false);
+      }
+    },
+    [wallet, deploying, config, setContractAddress, refreshPublicState],
+  );
 
   useEffect(() => {
     let cancelled = false;
@@ -165,7 +196,7 @@ export function WalletProvider({ children }: { children: ReactNode }) {
           if (!cancelled) {
             setWallet(w);
             window.localStorage.setItem(AUTOCONNECT_KEY, '1');
-            pushActivity('wallet_connect', 'Lace auto-connected', w.state.address);
+            pushActivity('wallet_connect', 'Wallet auto-connected', w.state.address);
           }
         } catch (err) {
           if (!cancelled) {
@@ -195,6 +226,8 @@ export function WalletProvider({ children }: { children: ReactNode }) {
       laceReady,
       wallet,
       connecting,
+      deploying,
+      deployError,
       walletError,
       publicState,
       stateLoading,
@@ -202,6 +235,7 @@ export function WalletProvider({ children }: { children: ReactNode }) {
       laceStoreUrl: LACE_STORE_URL,
       connect,
       disconnect,
+      deploy,
       refreshPublicState,
       setContractAddress,
       clearContractAddressOverride,
@@ -212,12 +246,15 @@ export function WalletProvider({ children }: { children: ReactNode }) {
       laceReady,
       wallet,
       connecting,
+      deploying,
+      deployError,
       walletError,
       publicState,
       stateLoading,
       stateError,
       connect,
       disconnect,
+      deploy,
       refreshPublicState,
       setContractAddress,
       clearContractAddressOverride,

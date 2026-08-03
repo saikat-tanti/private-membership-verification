@@ -10,17 +10,17 @@ import { shortAddr } from '@/lib/utils';
 import { clearActivity, pushActivity } from '@/lib/activity';
 import { LACE_STORE_URL } from '@/lib/lace';
 
-const LOCAL_DEPLOYED =
-  '1786cf52d30966919b2c4d052e874160a355f428f9e6941dd26057615e93c19b';
-
 export default function SettingsPage() {
   const {
     config,
     wallet,
     connecting,
+    deploying,
+    deployError,
     laceInstalled,
     connect,
     disconnect,
+    deploy,
     walletError,
     refreshPublicState,
     setContractAddress,
@@ -28,6 +28,7 @@ export default function SettingsPage() {
   } = useWallet();
 
   const [addressDraft, setAddressDraft] = useState(config.contractAddress ?? '');
+  const [groupName, setGroupName] = useState('VIP Founders Club');
 
   useEffect(() => {
     setAddressDraft(config.contractAddress ?? '');
@@ -39,19 +40,54 @@ export default function SettingsPage() {
     void refreshPublicState();
   };
 
+  const onDeploy = async () => {
+    const address = await deploy(groupName.trim() || undefined);
+    if (address) setAddressDraft(address);
+  };
+
   return (
     <div>
       <PageHeader
         title="Settings"
-        description="Network, contract, and wallet configuration for this Private Membership workspace."
+        description="Deploy with 1AM on Preview, paste an address, or tune network endpoints."
       />
 
       <div className="grid gap-4 lg:grid-cols-2">
         <Surface>
+          <h2 className="font-display text-xl">Deploy membership contract</h2>
+          <p className="mt-2 text-sm text-[var(--ink-muted)]">
+            Prefer <strong>1AM</strong> on <strong>Preview</strong> (sponsored DUST). Unlock, wait until synced,
+            then Deploy once. ZK proving often takes 2–5+ minutes — do not double-click.
+          </p>
+          <div className="mt-5 space-y-3">
+            <Input
+              value={groupName}
+              onChange={(e) => setGroupName(e.target.value)}
+              placeholder="Public group name"
+              spellCheck={false}
+            />
+            <Button
+              type="button"
+              variant="accent"
+              onClick={() => void onDeploy()}
+              disabled={!wallet || deploying}
+            >
+              {deploying ? 'Deploying (proving)…' : 'Deploy on Preview'}
+            </Button>
+            {!wallet ? <p className="text-sm text-[var(--ink-faint)]">Connect a wallet first.</p> : null}
+            {deployError ? <p className="text-sm text-[var(--danger)]">{deployError}</p> : null}
+            {deploying ? (
+              <p className="text-sm text-[var(--ink-muted)]">
+                Leave this tab open. Approve the 1AM popup when it appears — do not click Deploy again.
+              </p>
+            ) : null}
+          </div>
+        </Surface>
+
+        <Surface>
           <h2 className="font-display text-xl">Contract address</h2>
           <p className="mt-2 text-sm text-[var(--ink-muted)]">
-            Paste the deployed contract address from local setup (or Preprod when available). Saved
-            in this browser and applied immediately — no restart required.
+            Paste a deployed address (or use Deploy). Saved in this browser and applied immediately.
           </p>
           <form onSubmit={onSaveContract} className="mt-5 space-y-3">
             <div>
@@ -70,17 +106,6 @@ export default function SettingsPage() {
             <div className="flex flex-wrap gap-2">
               <Button type="submit" variant="accent">
                 Save address
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => {
-                  setAddressDraft(LOCAL_DEPLOYED);
-                  setContractAddress(LOCAL_DEPLOYED);
-                  void refreshPublicState();
-                }}
-              >
-                Use local deploy
               </Button>
               <Button
                 type="button"
@@ -115,26 +140,26 @@ export default function SettingsPage() {
             <div className="flex items-start justify-between gap-4">
               <dt className="text-[var(--ink-faint)]">Proof server</dt>
               <dd className="max-w-[60%] break-all text-right font-mono text-xs">
-                {config.proverUri ?? '—'}
+                {config.proverUri ?? wallet?.uris.proverServerUri ?? '—'}
               </dd>
             </div>
           </dl>
           <p className="mt-5 text-xs leading-relaxed text-[var(--ink-muted)]">
-            Defaults come from <code className="font-mono">membership-ui/.env.local</code>. Contract
-            address can also be overridden above.
+            Defaults come from <code className="font-mono">membership-ui/.env.local</code> (Preview). Remote proof
+            URL is proxied via <code className="font-mono">/proof-server</code>.
           </p>
         </Surface>
 
         <Surface>
           <div className="flex items-center justify-between gap-3">
-            <h2 className="font-display text-xl">Lace wallet</h2>
+            <h2 className="font-display text-xl">Midnight wallet</h2>
             <Badge tone={wallet ? 'ok' : laceInstalled ? 'warn' : 'danger'}>
               {wallet ? 'Connected' : laceInstalled ? 'Detected' : 'Missing'}
             </Badge>
           </div>
           <p className="mt-3 text-sm text-[var(--ink-muted)]">
-            On localhost, Lace auto-connects when the extension is available. Disconnecting disables
-            auto-connect until you connect again.
+            Prefers <strong>1AM</strong> when both wallets are installed. Set network to{' '}
+            <strong>Preview</strong> to match the app.
           </p>
           {wallet ? (
             <div className="mt-5 space-y-3">
@@ -152,7 +177,7 @@ export default function SettingsPage() {
             <div className="mt-5 flex flex-wrap gap-2">
               {laceInstalled ? (
                 <Button variant="accent" onClick={() => void connect()} disabled={connecting}>
-                  {connecting ? 'Connecting…' : 'Connect Lace'}
+                  {connecting ? 'Connecting…' : 'Connect wallet'}
                 </Button>
               ) : (
                 <a
@@ -161,7 +186,7 @@ export default function SettingsPage() {
                   rel="noreferrer"
                   className="inline-flex h-10 items-center rounded-md bg-[var(--accent)] px-4 text-sm font-medium text-white hover:bg-[var(--accent-deep)]"
                 >
-                  Install Lace
+                  Install Lace / 1AM
                 </a>
               )}
             </div>

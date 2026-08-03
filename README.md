@@ -10,6 +10,13 @@
 [![Node.js](https://img.shields.io/badge/Node.js-22+-10b981?style=flat-square)](https://nodejs.org)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](LICENSE)
 
+<p>
+  <a href="https://private-membership-verification.vercel.app/"><img src="https://img.shields.io/badge/Open_Live_App-000000?style=for-the-badge&logo=vercel&logoColor=white" alt="Open Live App" /></a>
+  <a href="https://youtu.be/gnPuRBhZtxc"><img src="https://img.shields.io/badge/Watch_Demo-FF0000?style=for-the-badge&logo=youtube&logoColor=white" alt="Watch Demo" /></a>
+  <a href="https://preview.midnightexplorer.com/contracts/0x67dc390b3d1a7771f1235e6338d09a8f452a7099ae5d6ef1ae701250da74af78"><img src="https://img.shields.io/badge/View_on_Explorer-0ea5e9?style=for-the-badge" alt="View on Explorer" /></a>
+  <a href="https://github.com/saikat-tanti/private-membership-verification/actions/workflows/ci.yml"><img src="https://img.shields.io/badge/GitHub_Actions-2088FF?style=for-the-badge&logo=githubactions&logoColor=white" alt="GitHub Actions" /></a>
+</p>
+
 ---
 
 ## Links
@@ -29,6 +36,40 @@
 CI installs Compact **0.31.1**, runs `npm run compile`, `npm test`, and builds the Next.js frontend.
 
 **Verified on Midnight Preview** via **1AM**: contract deployed (`VIP Founders Club`). Prefer Settings → paste the Preview address (faster than re-deploying).
+
+---
+
+## Screenshots & UI Showcase
+
+### 1. Landing
+Product entry for private allowlist membership on Midnight Preview.
+
+<img src="membership-ui/public/landing.png" alt="Landing" width="800" />
+
+### 2. Dashboard
+Network badge, wallet status, public `groupName`, and live `verifiedMemberCount`.
+
+<img src="membership-ui/public/dashboard.png" alt="Dashboard" width="800" />
+
+### 3. Membership
+Private secret witness → ZK prove → on-chain count increment.
+
+<img src="membership-ui/public/membership.png" alt="Membership" width="800" />
+
+### 4. Sponsors
+Off-chain sponsor seat roster (not on the public ledger).
+
+<img src="membership-ui/public/sponsor.png" alt="Sponsors" width="800" />
+
+### 5. Logs
+Local browser activity trail for connect, deploy, and verify.
+
+<img src="membership-ui/public/logs.png" alt="Logs" width="800" />
+
+### 6. Settings
+1AM **Deploy on Preview**, paste/save contract address, and indexer / prover URIs.
+
+<img src="membership-ui/public/settings.png" alt="Settings" width="800" />
 
 ---
 
@@ -79,8 +120,9 @@ DAOs and gated communities often force members to reveal wallets or secrets on-c
 | --- | --- |
 | Live UI | [private-membership-verification.vercel.app](https://private-membership-verification.vercel.app/) |
 | Demo video | [YouTube](https://youtu.be/gnPuRBhZtxc) |
+| **Preview** | `67dc390b3d1a7771f1235e6338d09a8f452a7099ae5d6ef1ae701250da74af78` |
 | Local undeployed | `1786cf52d30966919b2c4d052e874160a355f428f9e6941dd26057615e93c19b` |
-| Preprod address (local) | `1786cf52d30966919b2c4d052e874160a355f428f9e6941dd26057615e93c19b` |
+| Preprod (historical / local) | `1786cf52d30966919b2c4d052e874160a355f428f9e6941dd26057615e93c19b` |
 
 ### Mentor guidance (Preprod)
 
@@ -92,10 +134,10 @@ Preprod wallet sync timed out (`Wallet.Sync`) before deploy completed. Submissio
 
 ```env
 VITE_NETWORK=preview
-VITE_CONTRACT_ADDRESS=<preview-contract-address>
+VITE_CONTRACT_ADDRESS=67dc390b3d1a7771f1235e6338d09a8f452a7099ae5d6ef1ae701250da74af78
 VITE_INDEXER_URI=https://indexer.preview.midnight.network/api/v4/graphql
 VITE_INDEXER_WS_URI=wss://indexer.preview.midnight.network/api/v4/graphql/ws
-VITE_PROOF_SERVER_URL=http://127.0.0.1:6300
+VITE_PROOF_SERVER_URL=https://proof-server.preview.midnight.network
 ```
 
 Or paste the address in **Settings** and connect 1AM/Lace on **Preview**. Faucet: https://faucet.preview.midnight.network/
@@ -204,28 +246,6 @@ npm test
 - [x] Polished multi-page UI
 - [x] ≥10 meaningful commits
 - [x] No secrets / seeds / `.midnight-state.json` in git
-
----
-
-## Screenshots
-
-### Landing
-![Landing](membership-ui/public/landing.png)
-
-### Dashboard
-![Dashboard](membership-ui/public/dashboard.png)
-
-### Membership
-![Membership](membership-ui/public/membership.png)
-
-### Sponsors
-![Sponsors](membership-ui/public/sponsor.png)
-
-### Logs
-![Logs](membership-ui/public/log.png)
-
-### Settings
-![Settings](membership-ui/public/settings.png)
 
 ---
 

@@ -4,6 +4,9 @@ export type ActivityKind =
   | 'verify_attempt'
   | 'verify_success'
   | 'verify_error'
+  | 'deploy_attempt'
+  | 'deploy_success'
+  | 'deploy_error'
   | 'sponsor_create'
   | 'settings_update';
 
